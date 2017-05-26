@@ -104,9 +104,8 @@ trait EloquentBuilderTrait
                         'ew' => '%'.$value, // ends with
                         'sw' => $value.'%' // starts with
                     ];
-
-                    $databaseField = DB::raw(sprintf('CAST(%s.%s AS TEXT)', $table, $key));
-                    $clauseOperator = $not ? 'NOT ILIKE' : 'ILIKE';
+                    $databaseField = DB::raw(sprintf('%s.%s', $table, $key));
+                    $clauseOperator = $not ? 'NOT LIKE' : 'LIKE';
                     $value = $valueString[$operator];
                     break;
                 case 'eq':
@@ -217,7 +216,7 @@ trait EloquentBuilderTrait
             if ($relation instanceof BelongsTo) {
                 $query->join(
                     $relation->getRelated()->getTable(),
-                    $model->getTable().'.'.$relation->getForeignKey(),
+                    $model->getTable().'.'.$relation->getQualifiedForeignKeyName(),
                     '=',
                     $relation->getRelated()->getTable().'.'.$relation->getOtherKey(),
                     $type
@@ -227,7 +226,7 @@ trait EloquentBuilderTrait
                     $relation->getTable(),
                     $relation->getQualifiedParentKeyName(),
                     '=',
-                    $relation->getForeignKey(),
+                    $relation->getQualifiedForeignKeyName(),
                     $type
                 );
                 $query->join(
@@ -242,7 +241,7 @@ trait EloquentBuilderTrait
                     $relation->getRelated()->getTable(),
                     $relation->getQualifiedParentKeyName(),
                     '=',
-                    $relation->getForeignKey(),
+                    $relation->getQualifiedForeignKeyName(),
                     $type
                 );
             }
